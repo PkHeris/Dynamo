@@ -1,0 +1,414 @@
+{
+  "Uuid": "ee9b45d8-5f6d-46e1-8304-c74e135f9d08",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "Statistics",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# clr is a module that provides a bridge between Python and .NET Common Language Runtime (CLR)\r\nimport clr\r\n# datetime is a module to work with dates and times.\r\nfrom datetime import datetime\r\n# System is a .NET library, used here to get the current username\r\nfrom System import Environment\r\n# Adding reference to Revit's .NET API, necessary for interacting with Revit.\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\n# Adding reference to RevitServices, necessary for transactions and accessing the current Revit document.\r\nclr.AddReference('RevitServices')\r\nfrom RevitServices.Persistence import DocumentManager\r\n\r\n# Getting the current document in Revit.\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n# Getting the title of the current document. Using the Title property from the Revit Document class.\r\nproject_title = doc.Title\r\n\r\n# 'scriptid' should reflect the name of the current Dynamo script. \r\n# IMPORTANT: This value needs to be manually updated whenever the Dynamo script filename changes.\r\nscriptid = \"Your_Dynamo_Script_Name\";\r\n\r\nnow  = datetime.now()\r\n# Getting the current date.\r\ndate = datetime.date(now)\r\n# Getting the current time.\r\ntime = datetime.time(now)\r\n\r\n# Check if IN[0] is a string. If not, convert it to a string.\r\naction = str(IN[0]) if not isinstance(IN[0], str) else IN[0]\r\nUser = Environment.UserName\r\n\r\n# Collect input\r\nstart  = IN[1]\r\ndatain = IN[2]\r\n\r\n# Convert start string to datetime\r\nstart_datetime = datetime.strptime(start, \"%Y-%m-%d %H:%M:%S.%f\")\r\n\r\n# Output the time now\r\n\r\ndiff = now - start_datetime\r\nsecs = divmod(diff.total_seconds(), 60)\r\ntime_in_sec = str(secs[1])\r\n# Outputting a list containing various inputs and variables including the project title, date, and time.\r\noutput_list = [scriptid, User, project_title, str(date), str(time), action, time_in_sec]\r\n\r\n# Converting all components to string, concatenating them with \"|\" separator, and ending with a newline character\r\noutput_string = \"|\".join(output_list) + \"\\n\"\r\n\r\nOUT = output_string\r\n",
+      "VariableInputPorts": true,
+      "Id": "bf2e48cb43d84be690062ebfb2b87bf8",
+      "Inputs": [
+        {
+          "Id": "ed273a101998450d87460b53aba33979",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "6682658c1c8441aaaa05b69bb968ef54",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b0a7de99a1c94a4fa731187f99626dad",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "c89d38bcd1024d8fbc3983a735a4fc43",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\ninput = IN[0]\r\n\r\n# Directly providing the filename along with its absolute path.\r\nfilename = r\"FilePath\\Yourfile_Name.txt\"\r\n\r\nwith open(filename, 'a') as file:\r\n    # Writing the input into the file.\r\n    file.write(input)\r\n\r\nOUT = \"success\"\r\n",
+      "VariableInputPorts": true,
+      "Id": "4788a091a56a457a9b6ea0e16b30d173",
+      "Inputs": [
+        {
+          "Id": "9eb5a79fea3d4f12a821dcac16270603",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "234814f4fb9c434d8454cc34aac96313",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Transaction.Transaction.End@var",
+      "Id": "c7ac226f533c46669e6449389a172d2b",
+      "Inputs": [
+        {
+          "Id": "478e14a10be549ee9d5d7de265f736cb",
+          "Name": "input",
+          "Description": "An object.\n\nvar",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "59d5a5dbfa204d81ae2736e8b71f3316",
+          "Name": "var[]..[]",
+          "Description": "var[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Ends the current Dynamo transaction, returning whatever was passed in.\n\nTransaction.End (input: var): var[]..[]"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nclr.AddReference(\"RevitAPIUI\")\r\nfrom Autodesk.Revit.UI import *\r\n#IN[0] is the numer of ellements effected\r\naction = str(IN[0]) if not isinstance(IN[0], str) else IN[0]\r\ntitle = \"Great Success\"\r\nbody  = \"Items Changed: \" + action\r\npasst = IN[1]\r\n\r\nmsg = TaskDialog.Show(title, body,\r\nTaskDialogCommonButtons.Ok)\r\n\r\nif msg == TaskDialogResult.Ok:\r\n\tOUT = passt",
+      "VariableInputPorts": true,
+      "Id": "d52bf5d5f9f546fca3279b904effae0d",
+      "Inputs": [
+        {
+          "Id": "35087df45c6345e697103bffc9fbf532",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "762a79d22f0845c3822fcd5298b55901",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "d5a9f453a8e040f28c5214a9d54e2bd0",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# Load the Python Standard and DesignScript Libraries\r\nimport sys\r\nimport clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\nfrom datetime import *\r\n\r\n# Output the current date and time as a string\r\nOUT = datetime.now().strftime(\"%Y-%m-%d %H:%M:%S.%f\")\r\n",
+      "VariableInputPorts": true,
+      "Id": "df09b8facdbd4be7852e122e40880a9d",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "4006160a904447ccad0bc5089e4da04d",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "\"8\";",
+      "Id": "acb62ab2ec70473984e08ac1c85c8b33",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "646341074aba4a20957688bb57fba773",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "c89d38bcd1024d8fbc3983a735a4fc43",
+      "End": "9eb5a79fea3d4f12a821dcac16270603",
+      "Id": "dbf0810c227443ce9cacc1519a16f783"
+    },
+    {
+      "Start": "59d5a5dbfa204d81ae2736e8b71f3316",
+      "End": "762a79d22f0845c3822fcd5298b55901",
+      "Id": "f1c45ab81ed0496b86de84d95bba73c9"
+    },
+    {
+      "Start": "59d5a5dbfa204d81ae2736e8b71f3316",
+      "End": "b0a7de99a1c94a4fa731187f99626dad",
+      "Id": "1a7daf2dd98147d7a769cdbd477f902c"
+    },
+    {
+      "Start": "4006160a904447ccad0bc5089e4da04d",
+      "End": "6682658c1c8441aaaa05b69bb968ef54",
+      "Id": "287b0e80719b49e9acfd642b5392766e"
+    },
+    {
+      "Start": "646341074aba4a20957688bb57fba773",
+      "End": "478e14a10be549ee9d5d7de265f736cb",
+      "Id": "0d0129f4849d436a8eaa24cb9ed48461"
+    },
+    {
+      "Start": "646341074aba4a20957688bb57fba773",
+      "End": "35087df45c6345e697103bffc9fbf532",
+      "Id": "e9a75235cc53481a9fbe4bdea1f8db81"
+    },
+    {
+      "Start": "646341074aba4a20957688bb57fba773",
+      "End": "ed273a101998450d87460b53aba33979",
+      "Id": "1832e092d15240b385050d62a55f5ea7"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.6.2.15705",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Statistics Core",
+        "Id": "bf2e48cb43d84be690062ebfb2b87bf8",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1832.532022670036,
+        "Y": 84.779695947451785
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Write to TXT",
+        "Id": "4788a091a56a457a9b6ea0e16b30d173",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 2219.532022670036,
+        "Y": 84.779695947451771
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Transaction.End",
+        "Id": "c7ac226f533c46669e6449389a172d2b",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 997.06604192729128,
+        "Y": -119.55536879678604
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "UI Successfull massage",
+        "Id": "d52bf5d5f9f546fca3279b904effae0d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1610.8849998832968,
+        "Y": -235.52230018911087
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Script Start time",
+        "Id": "df09b8facdbd4be7852e122e40880a9d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1573.532022670036,
+        "Y": 110.77969594745173
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Code Block",
+        "Id": "acb62ab2ec70473984e08ac1c85c8b33",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 729.06604192729128,
+        "Y": -115.3420354634527
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "1b7d0a6530e14acab04bdf522cd87134",
+        "Title": "Final dialogue",
+        "Nodes": [
+          "d52bf5d5f9f546fca3279b904effae0d"
+        ],
+        "Left": 1600.8849998832968,
+        "Top": -331.52230018911087,
+        "Width": 221.0,
+        "Height": 215.0,
+        "FontSize": 36.0,
+        "InitialTop": -235.52230018911087,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 86.0,
+        "Background": "#FFFFFFFF"
+      },
+      {
+        "Id": "322a2adaafda492ab1d2ec11a6a78d37",
+        "Title": "Statistics",
+        "Nodes": [
+          "bf2e48cb43d84be690062ebfb2b87bf8",
+          "4788a091a56a457a9b6ea0e16b30d173",
+          "df09b8facdbd4be7852e122e40880a9d",
+          "5127a3b4add1407ea3b0962c04e4a4d6"
+        ],
+        "Left": 1563.532022670036,
+        "Top": -94.220304052548215,
+        "Width": 800.0,
+        "Height": 324.0,
+        "FontSize": 36.0,
+        "InitialTop": -41.220304052548215,
+        "InitialHeight": 296.99999999999994,
+        "TextblockHeight": 43.0,
+        "Background": "#FFBB87C6"
+      },
+      {
+        "Id": "bcef29cdb433427a81c9ff5e8535c7e7",
+        "Title": "Manipulations",
+        "Nodes": [
+          "c7ac226f533c46669e6449389a172d2b",
+          "acb62ab2ec70473984e08ac1c85c8b33",
+          "1cc686962c4a4ad68baf3a1bc04468aa"
+        ],
+        "Left": 719.06604192729128,
+        "Top": -207.3420354634527,
+        "Width": 482.0,
+        "Height": 185.0,
+        "FontSize": 36.0,
+        "InitialTop": -154.3420354634527,
+        "InitialHeight": 184.0,
+        "TextblockHeight": 43.0,
+        "Background": "#FFB9F9E1"
+      },
+      {
+        "Id": "5127a3b4add1407ea3b0962c04e4a4d6",
+        "Title": "IN[0] is number of elements that are effected.\r\n\r\nThe 'scriptid' parameter should reflect the name of the current Dynamo script. \r\nIMPORTANT: This value needs to be manually updated whenever the Dynamo script filename changes.",
+        "Nodes": [],
+        "Left": 1832.532022670036,
+        "Top": -41.220304052548215,
+        "Width": 0.0,
+        "Height": 0.0,
+        "FontSize": 36.0,
+        "InitialTop": 0.0,
+        "InitialHeight": 0.0,
+        "TextblockHeight": 0.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "1cc686962c4a4ad68baf3a1bc04468aa",
+        "Title": "\"Number of Items effected\";",
+        "Nodes": [],
+        "Left": 729.06604192729128,
+        "Top": -154.3420354634527,
+        "Width": 0.0,
+        "Height": 0.0,
+        "FontSize": 36.0,
+        "InitialTop": 0.0,
+        "InitialHeight": 0.0,
+        "TextblockHeight": 0.0,
+        "Background": "#FFC1D676"
+      }
+    ],
+    "X": 44.963169437185115,
+    "Y": 480.57209725781541,
+    "Zoom": 0.58087236286678423
+  }
+}
