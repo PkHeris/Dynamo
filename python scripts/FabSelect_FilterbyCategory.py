@@ -26,7 +26,7 @@ uidoc = DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument  # Get th
 
 def filter_by_category(element):
     """Check if an element's category is 'MEP Fabrication Ductwork' and not 'Tags'."""
-    return element.Category.Name == "MEP Fabrication Ductwork" and element.Category.Name != "Tags"
+    return element.Category.Name == "MEP Fabrication Ductwork"
 
 def output1(l1):
     """Return a list of elements that pass the filter, or a single element if there is only one."""
