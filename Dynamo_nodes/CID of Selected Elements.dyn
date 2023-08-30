@@ -1,0 +1,133 @@
+{
+  "Uuid": "aefface4-7c8b-419f-85b5-d4d4a2b4b2ec",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "CID of Selected Elements",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# Importing required libraries for Dynamo & Revit API\r\nimport clr\r\n\r\n# Adding references for Revit API\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\n\r\n# Adding references for DynamoRevit interop\r\nclr.AddReference('RevitNodes')\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\ndef get_item_custom_id(element):\r\n    \"\"\"Retrieve the ItemCustomId of an element if it exists.\"\"\"\r\n    if element is None:\r\n        error_messages.append(\"Error: Passed element is None.\")\r\n        return None\r\n    try:\r\n        cid = element.ItemCustomId\r\n        if cid is None:\r\n            error_messages.append(\"Error for Element {0}: ItemCustomId exists but is None.\".format(element.Id))\r\n        return cid\r\n    except AttributeError:\r\n        error_messages.append(\"Error for Element {0}: Unable to retrieve ItemCustomId\".format(element.Id))\r\n        return None\r\n\r\n\r\ndef flatten(input_list):\r\n    \"\"\"Flatten a list of lists.\"\"\"\r\n    if isinstance(input_list, list):\r\n        return [a for i in input_list for a in flatten(i)]\r\n    else:\r\n        return [input_list]\r\n\r\nerror_messages = []  # To collect error messages\r\ncids = []\r\n\r\n# Assuming the input elements are provided as IN[0]\r\nunwrapped_elements = [UnwrapElement(element) for element in flatten(IN[0])]\r\n\r\nfor element in unwrapped_elements:\r\n    cid = get_item_custom_id(element)\r\n    if cid is not None:\r\n        cids.append(cid)\r\n\r\nif error_messages:\r\n    OUT = cids, \"\\n\".join(error_messages)\r\nelse:\r\n    OUT = cids, \"No errors encountered\"\r\n",
+      "VariableInputPorts": true,
+      "Id": "2b7a42cdde5f420ba49cb47bd32f5980",
+      "Inputs": [
+        {
+          "Id": "82d93f163ffd40a09dd9dbe250e18fc4",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "232a8e11b5b6406a8ca4f65e4aaa654b",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# Importing required libraries to interact with the Revit API\r\nimport clr\r\n\r\n# Add a reference to RevitNodes library, which allows interaction with Revit's API using Python\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit  # Import the Revit module from RevitNodes\r\n\r\n# Add a reference to RevitServices which includes utilities for interacting with Revit\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices  # Import RevitServices module\r\nfrom RevitServices.Persistence import DocumentManager  # Import DocumentManager from RevitServices to provide access to the current Revit document\r\n\r\n# Get the current UI document (i.e., the document currently visible in the Revit interface)\r\nuidoc = DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument  \r\n\r\n# Get the current database document (i.e., the current open Revit document)\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n# Retrieve the IDs of the currently selected elements in the Revit interface\r\nselected_element_ids = uidoc.Selection.GetElementIds()\r\n\r\n# Fetch the actual Revit elements based on their IDs\r\nselected_elements = [doc.GetElement(id) for id in selected_element_ids]\r\n\r\n# Output the selected elements\r\nOUT = selected_elements\r\n",
+      "VariableInputPorts": true,
+      "Id": "61e2aabd2a2b48848a1fbeb397caed64",
+      "Inputs": [
+        {
+          "Id": "07a2340bc0eb4e9fadf011d7a118990b",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "3ceb752aeb46488d931737587f9d4815",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "3ceb752aeb46488d931737587f9d4815",
+      "End": "82d93f163ffd40a09dd9dbe250e18fc4",
+      "Id": "ef696553487d4d819ecc0922426a61a6"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.6.2.15705",
+      "RunType": "Automatic",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "CID",
+        "Id": "2b7a42cdde5f420ba49cb47bd32f5980",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 646.0,
+        "Y": 374.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Selected elements in Revit",
+        "Id": "61e2aabd2a2b48848a1fbeb397caed64",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 291.0,
+        "Y": 378.0
+      }
+    ],
+    "Annotations": [],
+    "X": 0.0,
+    "Y": 0.0,
+    "Zoom": 1.0
+  }
+}
