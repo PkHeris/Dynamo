@@ -145,7 +145,7 @@
     {
       "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
       "NodeType": "PythonScriptNode",
-      "Code": "# Constants\r\nrefresh = True  \r\nSUSP_TITLE = \"SUSP:\"\r\nSUSP_DEFAULT_VALUE = \"X\"\r\nSPOOL_TITLE = \"Spool Number:\"\r\nSPOOL_DEFAULT_VALUE = \"XX\"\r\n\r\n# Define lists\r\nFirstList = [\r\n    \"Parkade P4\", \"Parkade P3\", \"Parkade P2\", \"Parkade P1\", \r\n    \"Level 1\", \"Level 2\", \"Level 3\", \"Level 4\", \"Level 5\", \r\n    \"Level 6\", \"Level 7\", \"Level 8\", \"Level 9\", \"Level 10\", \"Level 11\"\r\n]\r\n\r\nSecondList = [\r\n    \"P4\", \"P3\", \"P2\", \"P1\", \"L01\", \"L02\", \"L03\", \"L04\", \r\n    \"L05\", \"L06\", \"L07\", \"L08\", \"L09\", \"L10\", \"L11\"\r\n]\r\n\r\nThirdList = [\r\n    \"Steam Pipe\", \"Domestic Process water\", \"Steam Condensate\", \r\n    \"Chilled Water Return\", \"Chilled Water Supply\", \"Hot Water Return\", \r\n    \"Hot Water Supply\", \"Low Temperature Hot Water Return\", \r\n    \"Low Temperature Hot Water Supply\", \"Domestic Hot Water\", \r\n    \"Domestic Cold Water\", \"Domestic Hot Water Recirc\", \"Storm\", \r\n    \"Sanitary\", \"Fuel Oil Supply\", \"Fuel Oil Return\"\r\n]\r\n\r\nFourthList = [\r\n    \"STM\", \"DPW\", \"CND\", \"CHWR\", \"CHWS\", \"HWR\", \"HWS\", \"LHWR\", \r\n    \"LHWS\", \"DHW\", \"DCW\", \"DHWR\", \"ST\", \"SAN\", \"FOS\", \"FOR\"\r\n]\r\n\r\nclass uitext():\r\n    def __init__(self, inputname, defaultvalue, _isnum):\r\n        self.inputname = inputname\r\n        self._isnum = _isnum\r\n        if _isnum: \r\n            self.defaultvalue = defaultvalue.replace(',', '.')\r\n        else: \r\n            self.defaultvalue = defaultvalue\r\n\r\n    def __repr__(self):\r\n        return 'UI.Textbox input'\r\n\r\nclass dropdown():\r\n    def __init__(self, inputname, defaultvalue, _sorted):\r\n        self.inputname = inputname\r\n        self.defaultvalue = defaultvalue\r\n        self._sorted = _sorted\r\n\r\n    def __setitem__(self, key, item):\r\n        self.__dict__[key] = item\r\n\r\n    def __getitem__(self, key):\r\n        return self.__dict__[key]\r\n\r\n    def __iter__(self):\r\n        return iter(self.__dict__)\r\n\r\n    def values(self):\r\n        return self.__dict__.values()\r\n\r\n    def keys(self):\r\n        return self.__dict__.keys()\r\n\r\n    def __repr__(self):\r\n        return 'UI.DropDown input'\r\n\r\ndef process_dropdown(inputname, keys, values):\r\n    drop_instance = dropdown(inputname, None, False)\r\n    \r\n    keys = keys if isinstance(keys, list) else [keys]\r\n    values = values if isinstance(values, list) else [values]\r\n    \r\n    for k, v in zip(keys, values):\r\n        drop_instance[str(k)] = v\r\n    \r\n    return drop_instance\r\n\r\ndef flatten_list(nested_list):\r\n    flat_list = []\r\n    for element in nested_list:\r\n        if isinstance(element, list):\r\n            flat_list.extend(flatten_list(element))\r\n        else:\r\n            flat_list.append(element)\r\n    return flat_list\r\n\r\ndef main():\r\n    levels_drop_down = process_dropdown(\"Level:\", FirstList, SecondList)\r\n    services_drop_down = process_dropdown(\"Service:\", ThirdList, FourthList)\r\n    \r\n    susp_textbox = uitext(SUSP_TITLE, SUSP_DEFAULT_VALUE, False)\r\n    spool_textbox = uitext(SPOOL_TITLE, SPOOL_DEFAULT_VALUE, False)\r\n\r\n    all_ui_elements = [levels_drop_down, services_drop_down, susp_textbox, spool_textbox]\r\n    \r\n    return flatten_list(all_ui_elements)\r\n\r\nOUT = main()\r\n",
+      "Code": "# Constants\r\nrefresh = True  \r\nSUSP_TITLE = \"SUSP:\"\r\nSUSP_DEFAULT_VALUE = \"X\"\r\nSPOOL_TITLE = \"Spool Number:\"\r\nSPOOL_DEFAULT_VALUE = \"XX\"\r\n\r\n# Define lists\r\nFirstList = [\r\n    \"Parkade P4\", \"Parkade P3\", \"Parkade P2\", \"Parkade P1\", \r\n    \"Level 1\", \"Level 2\", \"Level 3\", \"Level 4\", \"Level 5\", \r\n    \"Level 6\", \"Level 7\", \"Level 8\", \"Level 9\", \"Level 10\", \"Level 11\"\r\n]\r\n\r\nSecondList = [\r\n    \"P4\", \"P3\", \"P2\", \"P1\", \"L01\", \"L02\", \"L03\", \"L04\", \r\n    \"L05\", \"L06\", \"L07\", \"L08\", \"L09\", \"L10\", \"L11\"\r\n]\r\n\r\nThirdList = [\r\n    \"Steam Pipe\", \"Domestic Process water\", \"Steam Condensate\", \r\n    \"Chilled Water Return\", \"Chilled Water Supply\", \"Hot Water Return\", \r\n    \"Hot Water Supply\", \"Low Temperature Hot Water Return\", \r\n    \"Low Temperature Hot Water Supply\", \"Domestic Hot Water\", \r\n    \"Domestic Cold Water\", \"Domestic Hot Water Recirc\", \"Storm\", \r\n    \"Sanitary\", \"Fuel Oil Supply\", \"Fuel Oil Return\"\r\n]\r\n\r\nFourthList = [\r\n    \"STM\", \"DPW\", \"CND\", \"CHWR\", \"CHWS\", \"HWR\", \"HWS\", \"LHWR\", \r\n    \"LHWS\", \"DHW\", \"DCW\", \"DHWR\", \"ST\", \"SAN\", \"FOS\", \"FOR\"\r\n]\r\n\r\nclass uitext():\r\n    def __init__(self, inputname, defaultvalue, _isnum):\r\n        self.inputname = inputname\r\n        self._isnum = _isnum\r\n        if _isnum: \r\n            self.defaultvalue = defaultvalue.replace(',', '.')\r\n        else: \r\n            self.defaultvalue = defaultvalue\r\n\r\n    def __repr__(self):\r\n        return 'UI.Textbox input'\r\n\r\nclass dropdown():\r\n    def __init__(self, inputname, defaultvalue, _sorted):\r\n        self.inputname = inputname\r\n        self.defaultvalue = defaultvalue\r\n        self._sorted = _sorted\r\n\r\n    def __setitem__(self, key, item):\r\n        self.__dict__[key] = item\r\n\r\n    def __getitem__(self, key):\r\n        return self.__dict__[key]\r\n\r\n    def __iter__(self):\r\n        return iter(self.__dict__)\r\n\r\n    def values(self):\r\n        return self.__dict__.values()\r\n\r\n    def keys(self):\r\n        return self.__dict__.keys()\r\n\r\n    def __repr__(self):\r\n        return 'UI.DropDown input'\r\n\r\ndef process_dropdown(inputname, keys, values, defaultvalue=None):\r\n    drop_instance = dropdown(inputname, defaultvalue, False)\r\n    \r\n    keys = keys if isinstance(keys, list) else [keys]\r\n    values = values if isinstance(values, list) else [values]\r\n    \r\n    for k, v in zip(keys, values):\r\n        drop_instance[str(k)] = v\r\n    \r\n    return drop_instance\r\n\r\ndef flatten_list(nested_list):\r\n    flat_list = []\r\n    for element in nested_list:\r\n        if isinstance(element, list):\r\n            flat_list.extend(flatten_list(element))\r\n        else:\r\n            flat_list.append(element)\r\n    return flat_list\r\n\r\ndef main():\r\n    levels_drop_down = process_dropdown(\"Level:\", FirstList, SecondList,3)\r\n    services_drop_down = process_dropdown(\"Service:\", ThirdList, FourthList,2)\r\n    \r\n    susp_textbox = uitext(SUSP_TITLE, SUSP_DEFAULT_VALUE, False)\r\n    spool_textbox = uitext(SPOOL_TITLE, SPOOL_DEFAULT_VALUE, False)\r\n\r\n    all_ui_elements = [levels_drop_down, services_drop_down, susp_textbox, spool_textbox]\r\n    \r\n    return flatten_list(all_ui_elements)\r\n\r\nOUT = main()\r\n",
       "VariableInputPorts": true,
       "Id": "5557796cba3d402b9599bbe7629a81b6",
       "Inputs": [],
@@ -320,31 +320,31 @@
     },
     "NodeViews": [
       {
+        "ShowGeometry": true,
+        "Name": "User Interface From",
         "Id": "021422c1c60d4ff4a050b87382bd9418",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
-        "Name": "User Interface From",
-        "ShowGeometry": true,
         "Excluded": false,
         "X": -1021.2683324430673,
         "Y": 6212.9622117324816
       },
       {
+        "ShowGeometry": true,
+        "Name": "Floor Dropdown",
         "Id": "5557796cba3d402b9599bbe7629a81b6",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
-        "Name": "Floor Dropdown",
-        "ShowGeometry": true,
         "Excluded": false,
         "X": -1524.3402421886542,
-        "Y": 6203.8964813829
+        "Y": 6203.2633566744371
       },
       {
+        "ShowGeometry": true,
+        "Name": "Code Block",
         "Id": "be534f89cd1940a68a22c56203920d58",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
-        "Name": "Code Block",
-        "ShowGeometry": true,
         "Excluded": false,
         "X": -1531.1868713729648,
         "Y": 6311.6469682826228
@@ -360,12 +360,12 @@
           "be534f89cd1940a68a22c56203920d58"
         ],
         "Left": -1541.1868713729648,
-        "Top": 6150.8964813829,
+        "Top": 6150.2633566744371,
         "Width": 664.91853892989752,
-        "Height": 389.06573034958183,
+        "Height": 389.6988550580445,
         "FontSize": 36.0,
-        "InitialTop": 6203.8964813829,
-        "InitialHeight": 254.70666666666693,
+        "InitialTop": 6203.2633566744371,
+        "InitialHeight": 252.750486899723,
         "TextblockHeight": 43.0,
         "Background": "#FFC1D676"
       }
