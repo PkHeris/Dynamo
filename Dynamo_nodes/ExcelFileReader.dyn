@@ -1,0 +1,110 @@
+{
+  "Uuid": "b423c8df-8ea9-40ed-81f6-4d8ef1a052b3",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "ExcelFileReader",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nclr.AddReference('System.Windows.Forms')\r\nclr.AddReference('System.Drawing')\r\nclr.AddReferenceByName('Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c')\r\nfrom Microsoft.Office.Interop import Excel\r\nfrom System.Windows.Forms import OpenFileDialog, DialogResult\r\nfrom System import Environment\r\nfrom System.Runtime.InteropServices import Marshal\r\n\r\ndef select_excel_file():\r\n    dialog = OpenFileDialog()\r\n    dialog.Filter = \"Excel files (*.xls;*.xlsx)|*.xls;*.xlsx|All files (*.*)|*.*\"\r\n    dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)\r\n    dialog.Title = \"Select an Excel file\"\r\n\r\n    if dialog.ShowDialog() == DialogResult.OK:\r\n        return dialog.FileName\r\n    else:\r\n        return None\r\n\r\ndef read_excel(file_path):\r\n    excel_app = Excel.ApplicationClass()\r\n    excel_app.Visible = False\r\n    workbook = excel_app.Workbooks.Open(file_path)\r\n    sheet = workbook.Sheets[1]\r\n    used_range = sheet.UsedRange\r\n    rows = used_range.Rows.Count\r\n    columns = used_range.Columns.Count\r\n\r\n    data = [[used_range.Cells(row, col).Value2 for col in range(1, columns + 1)] for row in range(1, rows + 1)]\r\n\r\n    workbook.Close(False)\r\n    excel_app.Quit()\r\n\r\n    Marshal.ReleaseComObject(sheet)\r\n    Marshal.ReleaseComObject(workbook)\r\n    Marshal.ReleaseComObject(excel_app)\r\n\r\n    return data\r\n\r\n\r\nfile_path = select_excel_file()\r\n\r\n\r\nexcel_data = None\r\nif file_path:\r\n    excel_data = read_excel(file_path)\r\n\r\nOUT = excel_data\r\n",
+      "Engine": "IronPython2",
+      "VariableInputPorts": true,
+      "Id": "79158d7b00804899b11a4cb1b64ccef0",
+      "Inputs": [
+        {
+          "Id": "ba0a4bd8befd495f8a9bbfa56ec51214",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "6994248aa30245f6a3b6a24fa312e09f",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    }
+  ],
+  "Connectors": [],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "2.12",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "1.10",
+      "Data": {}
+    }
+  ],
+  "Author": "",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.12.1.8246",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "Id": "79158d7b00804899b11a4cb1b64ccef0",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Python Script",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 462.0,
+        "Y": 416.0
+      }
+    ],
+    "Annotations": [],
+    "X": 0.0,
+    "Y": 0.0,
+    "Zoom": 1.0
+  }
+}
